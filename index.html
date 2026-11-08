@@ -4,18 +4,543 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Wireframe iPhone 15 App</title>
-    <meta name="description" content="Applicazione mobile wireframe in bianco e nero in formato iPhone 15 a due pagine con navigazione avanti e indietro." />
+    <meta name="description" content="Applicazione mobile wireframe in formato iPhone 15 a due pagine con navigazione avanti e indietro." />
     <meta property="og:title" content="Wireframe iPhone 15 App" />
-    <meta property="og:description" content="Applicazione mobile wireframe in bianco e nero in formato iPhone 15 a due pagine con navigazione avanti e indietro." />
+    <meta property="og:description" content="Applicazione mobile wireframe in formato iPhone 15 a due pagine con navigazione avanti e indietro." />
     <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
+    
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (CDN Standalone: no node/build required for GitHub Pages) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+              mono: ['"Space Mono"', 'monospace'],
+            }
+          }
+        }
+      }
+    </script>
+    
+    <style>
+      /* Wireframe Blueprint Grids */
+      .wireframe-dot-grid {
+        background-image: radial-gradient(rgba(0, 0, 0, 0.15) 1px, transparent 1px);
+        background-size: 20px 20px;
+      }
+
+      .wireframe-line-grid {
+        background-image: 
+          linear-gradient(to right, rgba(0, 0, 0, 0.06) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
+        background-size: 24px 24px;
+      }
+
+      /* Screen page slide transition styles */
+      .screen-page {
+        transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease-out;
+      }
+      .page-active {
+        transform: translateX(0);
+        opacity: 1;
+        pointer-events: auto;
+        visibility: visible;
+      }
+      .page-left {
+        transform: translateX(-100%);
+        opacity: 0;
+        pointer-events: none;
+        visibility: hidden;
+      }
+      .page-right {
+        transform: translateX(100%);
+        opacity: 0;
+        pointer-events: none;
+        visibility: hidden;
+      }
+
+      /* Custom scrollbars */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f5f5f5;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #000000;
+        border-radius: 3px;
+      }
+    </style>
   </head>
-  <body class="bg-neutral-100 text-neutral-900 antialiased selection:bg-black selection:text-white">
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+  <body class="bg-neutral-100 text-neutral-900 font-sans antialiased select-none min-h-screen flex flex-col overflow-x-hidden">
+
+    <!-- Top Studio Toolbar -->
+    <header class="bg-white border-b-2 border-black px-4 lg:px-8 py-3 sticky top-0 z-50 shadow-[0_2px_0_0_#000]">
+      <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+        <!-- Logo & Spec -->
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 border-2 border-black bg-white flex items-center justify-center font-mono font-bold text-sm shadow-[2px_2px_0px_0px_#000]">
+            WF
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span class="font-mono text-xs font-bold tracking-widest uppercase">Wireframe Prototype</span>
+              <span class="text-[10px] bg-black text-white px-1.5 py-0.5 font-mono font-bold">
+                IPHONE 15
+              </span>
+            </div>
+            <p class="text-xs text-neutral-500 font-mono">
+              393 × 852 pt · Static HTML5 Standalone
+            </p>
+          </div>
+        </div>
+
+        <!-- Page Switcher Bar -->
+        <div class="flex items-center gap-2 bg-neutral-50 border-2 border-black p-1 shadow-[2px_2px_0px_0px_#000]">
+          <button
+            id="tab-page-1"
+            onclick="goToPage(1)"
+            class="px-3 py-1 font-mono text-xs font-bold transition-all flex items-center gap-1.5 bg-red-600 text-white shadow-[1px_1px_0px_0px_#000]"
+          >
+            <span class="w-2 h-2 rounded-full border border-black bg-white"></span>
+            <span>Pagina 1 [avanti]</span>
+          </button>
+          <span class="text-neutral-400 font-mono text-xs">→</span>
+          <button
+            id="tab-page-2"
+            onclick="goToPage(2)"
+            class="px-3 py-1 font-mono text-xs font-bold transition-all flex items-center gap-1.5 bg-white text-black hover:bg-neutral-200 border border-neutral-300"
+          >
+            <span class="w-2 h-2 rounded-full border border-black bg-neutral-300"></span>
+            <span>Pagina 2 [indietro]</span>
+          </button>
+        </div>
+
+        <!-- Controls (Grid, Position, Zoom, Mode) -->
+        <div class="flex items-center gap-2 flex-wrap">
+          <!-- Toggle Grid -->
+          <button
+            id="btn-toggle-grid"
+            onclick="toggleGrid()"
+            title="Attiva/Disattiva griglia wireframe"
+            class="px-2.5 py-1.5 border-2 border-black bg-black text-white text-xs font-mono font-medium flex items-center gap-1.5 transition-all shadow-[2px_2px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+          >
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            <span>Griglia</span>
+          </button>
+
+          <!-- Toggle Position (Center vs Bottom) -->
+          <button
+            id="btn-toggle-pos"
+            onclick="togglePlacement()"
+            title="Posizione bottone: Al Centro o In Basso"
+            class="px-2.5 py-1.5 border-2 border-black bg-white hover:bg-neutral-100 text-xs font-mono font-medium flex items-center gap-1.5 transition-all shadow-[2px_2px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+          >
+            <span class="text-neutral-500">Posizione:</span>
+            <span id="label-pos" class="font-bold uppercase">Al Centro</span>
+          </button>
+
+          <!-- Zoom Selector -->
+          <div class="hidden sm:flex items-center border-2 border-black bg-white shadow-[2px_2px_0px_0px_#000] text-xs font-mono">
+            <span class="px-2 py-1 text-neutral-500 border-r border-black">Zoom</span>
+            <button onclick="setScale(0.8)" class="zoom-btn px-2 py-1 font-bold hover:bg-neutral-100" data-scale="0.8">80%</button>
+            <button onclick="setScale(0.9)" class="zoom-btn px-2 py-1 font-bold bg-black text-white" data-scale="0.9">90%</button>
+            <button onclick="setScale(1.0)" class="zoom-btn px-2 py-1 font-bold hover:bg-neutral-100" data-scale="1.0">100%</button>
+          </div>
+
+          <!-- Fullscreen / Frame Toggle -->
+          <button
+            id="btn-toggle-mode"
+            onclick="toggleDeviceMode()"
+            title="Passa da Mockup iPhone 15 a Schermo Intero"
+            class="px-2.5 py-1.5 border-2 border-black bg-white hover:bg-neutral-100 text-xs font-mono font-medium flex items-center gap-1.5 transition-all shadow-[2px_2px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+          >
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+              <line x1="12" y1="18" x2="12.01" y2="18"></line>
+            </svg>
+            <span id="label-mode" class="hidden md:inline">Schermo Intero</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="flex-1 flex flex-col items-center justify-center p-4 md:p-8 relative wireframe-dot-grid overflow-hidden">
+      <!-- Blueprint Technical Metadata -->
+      <div class="absolute top-4 left-6 text-[10px] font-mono text-neutral-400 select-none hidden lg:block">
+        <div>CANVAS: IPHONE 15 / 393 × 852 PT</div>
+        <div id="meta-scale">SCALA: 90% · FORMATO NATIVO</div>
+        <div>GITHUB PAGES READY · STANDALONE STATIC</div>
+      </div>
+
+      <div class="absolute bottom-4 right-6 text-[10px] font-mono text-neutral-400 select-none hidden lg:block text-right">
+        <div>NAVIGAZIONE: BTN_ACTION</div>
+        <div>PAGINA 1: ROSSO // PAGINA 2: BIANCO</div>
+      </div>
+
+      <!-- iPhone 15 Scalable Wrapper -->
+      <div id="device-wrapper" class="transition-transform duration-200 origin-center my-auto flex flex-col items-center" style="transform: scale(0.9);">
+        
+        <!-- Outer Chassis -->
+        <div id="chassis-outer" class="relative">
+          <!-- Physical Side Buttons Outline -->
+          <div class="chassis-btn absolute -left-[5px] top-[140px] w-[5px] h-[32px] bg-black rounded-l-[3px] border-l border-y border-neutral-600"></div>
+          <div class="chassis-btn absolute -left-[5px] top-[190px] w-[5px] h-[55px] bg-black rounded-l-[3px] border-l border-y border-neutral-600"></div>
+          <div class="chassis-btn absolute -left-[5px] top-[260px] w-[5px] h-[55px] bg-black rounded-l-[3px] border-l border-y border-neutral-600"></div>
+          <div class="chassis-btn absolute -right-[5px] top-[205px] w-[5px] h-[80px] bg-black rounded-r-[3px] border-r border-y border-neutral-600"></div>
+
+          <!-- Chassis Body -->
+          <div id="chassis-body" class="w-[419px] h-[878px] bg-white border-[4px] border-black rounded-[56px] p-[10px] shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] relative flex flex-col transition-all">
+            <!-- Antenna Bands -->
+            <div class="antenna-band absolute top-[80px] -left-[4px] w-[4px] h-[6px] bg-neutral-300"></div>
+            <div class="antenna-band absolute top-[80px] -right-[4px] w-[4px] h-[6px] bg-neutral-300"></div>
+            <div class="antenna-band absolute bottom-[80px] -left-[4px] w-[4px] h-[6px] bg-neutral-300"></div>
+            <div class="antenna-band absolute bottom-[80px] -right-[4px] w-[4px] h-[6px] bg-neutral-300"></div>
+
+            <!-- Display Area (iPhone 15: 393 × 852 pt) -->
+            <div 
+              id="iphone-screen" 
+              class="w-[393px] h-[852px] bg-red-600 border-2 border-black rounded-[46px] overflow-hidden relative flex flex-col transition-colors duration-300 wireframe-line-grid"
+            >
+              <!-- Top Status Bar & Dynamic Island -->
+              <div class="w-full pt-3 px-6 flex items-center justify-between z-30 shrink-0">
+                <!-- Clock -->
+                <div id="status-clock" class="w-14 font-mono font-bold text-xs tracking-tight text-white transition-colors duration-300">
+                  09:41
+                </div>
+
+                <!-- Dynamic Island (Centered Pill) -->
+                <div class="w-[124px] h-[34px] bg-black rounded-full flex items-center justify-between px-3 border border-neutral-700 shadow-inner">
+                  <div class="w-3 h-3 rounded-full border border-neutral-600 bg-neutral-900 flex items-center justify-center">
+                    <div class="w-1 h-1 rounded-full bg-neutral-400"></div>
+                  </div>
+                  <div class="w-2.5 h-2.5 rounded-full border border-neutral-600 bg-neutral-800"></div>
+                </div>
+
+                <!-- Status Icons: Cellular, Wi-Fi, Battery -->
+                <div class="w-14 flex items-center justify-end gap-1.5">
+                  <!-- Cellular 4-bars -->
+                  <div id="status-signal" class="flex items-end gap-[1.5px] h-3">
+                    <div class="cell-bar w-[2px] h-[3px] bg-white transition-colors"></div>
+                    <div class="cell-bar w-[2px] h-[5px] bg-white transition-colors"></div>
+                    <div class="cell-bar w-[2px] h-[8px] bg-white transition-colors"></div>
+                    <div class="cell-bar w-[2px] h-[11px] bg-white transition-colors"></div>
+                  </div>
+
+                  <!-- Wi-Fi Icon -->
+                  <svg id="status-wifi" class="w-3.5 h-3.5 fill-none stroke-[1.8] stroke-white transition-colors" viewBox="0 0 24 24">
+                    <path d="M5 12.55a11 11 0 0 1 14.08 0" stroke-linecap="round"></path>
+                    <path d="M8.5 16.05a6 6 0 0 1 7 0" stroke-linecap="round"></path>
+                    <line x1="12" y1="20" x2="12.01" y2="20" stroke-linecap="round" stroke-width="2.5"></line>
+                  </svg>
+
+                  <!-- Battery Outline -->
+                  <div class="flex items-center">
+                    <div id="status-battery-body" class="w-[19px] h-[10px] border-[1.5px] border-white rounded-[2.5px] p-[1px] flex items-center transition-colors">
+                      <div id="status-battery-fill" class="w-[11px] h-full bg-white rounded-[1px] transition-colors"></div>
+                    </div>
+                    <div id="status-battery-knob" class="w-[1.5px] h-[4px] bg-white rounded-r-[1px] transition-colors"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Pages Viewport -->
+              <div class="flex-1 relative overflow-hidden flex flex-col">
+                
+                <!-- ============================================================ -->
+                <!-- PAGINA 1: Background ROSSO con dentro SOLO bottone "avanti"   -->
+                <!-- ============================================================ -->
+                <div
+                  id="page-1"
+                  class="screen-page page-active absolute inset-0 p-8 flex flex-col items-center justify-center bg-red-600"
+                >
+                  <!-- Il solo bottone con scritto "avanti" -->
+                  <button
+                    id="btn-avanti"
+                    onclick="goToPage(2)"
+                    class="w-full max-w-[260px] py-4 px-6 bg-white text-black border-2 border-black font-mono font-bold text-base tracking-wider uppercase rounded-lg shadow-[4px_4px_0px_0px_#000000] hover:bg-neutral-100 active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-3 cursor-pointer group"
+                    aria-label="Avanti alla pagina 2"
+                  >
+                    <span>avanti</span>
+                    <svg class="w-4 h-4 transition-transform group-hover:translate-x-1 stroke-[2.5]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                  </button>
+                </div>
+
+                <!-- ============================================================ -->
+                <!-- PAGINA 2: Con dentro SOLO un bottone con scritto "indietro"   -->
+                <!-- ============================================================ -->
+                <div
+                  id="page-2"
+                  class="screen-page page-right absolute inset-0 p-8 flex flex-col items-center justify-center bg-white"
+                >
+                  <!-- Il solo bottone con scritto "indietro" -->
+                  <button
+                    id="btn-indietro"
+                    onclick="goToPage(1)"
+                    class="w-full max-w-[260px] py-4 px-6 bg-white text-black border-2 border-black font-mono font-bold text-base tracking-wider uppercase rounded-lg shadow-[4px_4px_0px_0px_#000000] hover:bg-neutral-50 active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-3 cursor-pointer group"
+                    aria-label="Indietro alla pagina 1"
+                  >
+                    <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1 stroke-[2.5]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <line x1="19" y1="12" x2="5" y2="12"></line>
+                      <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    <span>indietro</span>
+                  </button>
+                </div>
+
+              </div>
+
+              <!-- Bottom Home Indicator Bar (iPhone 15) -->
+              <div class="w-full py-2 flex justify-center items-center z-30 shrink-0">
+                <div id="home-indicator" class="w-[134px] h-[4.5px] bg-black/90 rounded-full transition-colors"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Device Info Label -->
+        <div class="mt-4 flex items-center justify-center gap-3 text-xs font-mono text-neutral-600">
+          <span class="font-bold">iPhone 15</span>
+          <span>·</span>
+          <span>393 × 852 pt</span>
+          <span>·</span>
+          <span id="page-caption-badge" class="border px-1.5 py-0.5 text-[10px] font-bold border-red-600 bg-red-600 text-white">
+            SCHERMATA 1 (SFONDO ROSSO)
+          </span>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer Navigation Flow -->
+    <footer class="bg-white border-t-2 border-black py-2.5 px-4 text-center font-mono text-xs text-neutral-600">
+      <div class="max-w-4xl mx-auto flex items-center justify-center gap-3">
+        <span id="footer-p1-tag" class="px-2 py-0.5 border flex items-center gap-1.5 border-red-600 font-bold bg-red-50 text-red-700">
+          <span class="w-2 h-2 rounded-full bg-red-600 inline-block"></span>
+          Pagina 1: [avanti]
+        </span>
+        <span class="text-black font-bold">⇄</span>
+        <span id="footer-p2-tag" class="px-2 py-0.5 border border-neutral-300 text-neutral-400">
+          Pagina 2: [indietro]
+        </span>
+        <span class="hidden md:inline text-neutral-400">· Clicca sui bottoni per navigare</span>
+      </div>
+    </footer>
+
+    <!-- Pure Vanilla JavaScript (Zero build tools / Zero React / 100% Static) -->
+    <script>
+      let currentPage = 1;
+      let showGrid = true;
+      let buttonPlacement = 'center'; // 'center' or 'bottom'
+      let isFullMobile = false;
+
+      // Update live clock in status bar
+      function updateClock() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const clockEl = document.getElementById('status-clock');
+        if (clockEl) clockEl.textContent = `${hours}:${minutes}`;
+      }
+      updateClock();
+      setInterval(updateClock, 30000);
+
+      // Page Navigation Handler
+      function goToPage(page) {
+        if (page === currentPage) return;
+        
+        const p1 = document.getElementById('page-1');
+        const p2 = document.getElementById('page-2');
+        const screen = document.getElementById('iphone-screen');
+        const clock = document.getElementById('status-clock');
+        const wifi = document.getElementById('status-wifi');
+        const cellBars = document.querySelectorAll('.cell-bar');
+        const batteryBody = document.getElementById('status-battery-body');
+        const batteryFill = document.getElementById('status-battery-fill');
+        const batteryKnob = document.getElementById('status-battery-knob');
+        const homeIndicator = document.getElementById('home-indicator');
+
+        const tabP1 = document.getElementById('tab-page-1');
+        const tabP2 = document.getElementById('tab-page-2');
+        const caption = document.getElementById('page-caption-badge');
+        const footerP1 = document.getElementById('footer-p1-tag');
+        const footerP2 = document.getElementById('footer-p2-tag');
+
+        if (page === 2) {
+          // Go from 1 -> 2
+          p1.className = `screen-page page-left absolute inset-0 p-8 flex flex-col ${buttonPlacement === 'center' ? 'items-center justify-center' : 'items-center justify-end pb-12'} bg-red-600`;
+          p2.className = `screen-page page-active absolute inset-0 p-8 flex flex-col ${buttonPlacement === 'center' ? 'items-center justify-center' : 'items-center justify-end pb-12'} bg-white`;
+
+          // Screen background -> white
+          screen.classList.remove('bg-red-600');
+          screen.classList.add('bg-white');
+
+          // Status icons -> black
+          clock.classList.remove('text-white');
+          clock.classList.add('text-black');
+
+          wifi.classList.remove('stroke-white');
+          wifi.classList.add('stroke-black');
+
+          cellBars.forEach(b => {
+            b.classList.remove('bg-white');
+            b.classList.add('bg-black');
+          });
+
+          batteryBody.classList.remove('border-white');
+          batteryBody.classList.add('border-black');
+          batteryFill.classList.remove('bg-white');
+          batteryFill.classList.add('bg-black');
+          batteryKnob.classList.remove('bg-white');
+          batteryKnob.classList.add('bg-black');
+          
+          homeIndicator.classList.remove('bg-black/90');
+          homeIndicator.classList.add('bg-black');
+
+          // Header Tabs
+          tabP1.className = 'px-3 py-1 font-mono text-xs font-bold transition-all flex items-center gap-1.5 bg-white text-black hover:bg-neutral-200 border border-neutral-300';
+          tabP2.className = 'px-3 py-1 font-mono text-xs font-bold transition-all flex items-center gap-1.5 bg-black text-white shadow-[1px_1px_0px_0px_#000]';
+
+          // Caption & Footer
+          caption.textContent = 'SCHERMATA 2 (SFONDO BIANCO)';
+          caption.className = 'border px-1.5 py-0.5 text-[10px] font-bold border-black bg-white text-black';
+
+          footerP1.className = 'px-2 py-0.5 border border-neutral-300 text-neutral-400';
+          footerP2.className = 'px-2 py-0.5 border border-black font-bold bg-neutral-100 text-black';
+
+          currentPage = 2;
+        } else {
+          // Go from 2 -> 1
+          p1.className = `screen-page page-active absolute inset-0 p-8 flex flex-col ${buttonPlacement === 'center' ? 'items-center justify-center' : 'items-center justify-end pb-12'} bg-red-600`;
+          p2.className = `screen-page page-right absolute inset-0 p-8 flex flex-col ${buttonPlacement === 'center' ? 'items-center justify-center' : 'items-center justify-end pb-12'} bg-white`;
+
+          // Screen background -> red
+          screen.classList.remove('bg-white');
+          screen.classList.add('bg-red-600');
+
+          // Status icons -> white
+          clock.classList.remove('text-black');
+          clock.classList.add('text-white');
+
+          wifi.classList.remove('stroke-black');
+          wifi.classList.add('stroke-white');
+
+          cellBars.forEach(b => {
+            b.classList.remove('bg-black');
+            b.classList.add('bg-white');
+          });
+
+          batteryBody.classList.remove('border-black');
+          batteryBody.classList.add('border-white');
+          batteryFill.classList.remove('bg-black');
+          batteryFill.classList.add('bg-white');
+          batteryKnob.classList.remove('bg-black');
+          batteryKnob.classList.add('bg-white');
+
+          homeIndicator.classList.remove('bg-black');
+          homeIndicator.classList.add('bg-black/90');
+
+          // Header Tabs
+          tabP1.className = 'px-3 py-1 font-mono text-xs font-bold transition-all flex items-center gap-1.5 bg-red-600 text-white shadow-[1px_1px_0px_0px_#000]';
+          tabP2.className = 'px-3 py-1 font-mono text-xs font-bold transition-all flex items-center gap-1.5 bg-white text-black hover:bg-neutral-200 border border-neutral-300';
+
+          // Caption & Footer
+          caption.textContent = 'SCHERMATA 1 (SFONDO ROSSO)';
+          caption.className = 'border px-1.5 py-0.5 text-[10px] font-bold border-red-600 bg-red-600 text-white';
+
+          footerP1.className = 'px-2 py-0.5 border flex items-center gap-1.5 border-red-600 font-bold bg-red-50 text-red-700';
+          footerP2.className = 'px-2 py-0.5 border border-neutral-300 text-neutral-400';
+
+          currentPage = 1;
+        }
+      }
+
+      // Toggle Grid Lines
+      function toggleGrid() {
+        showGrid = !showGrid;
+        const screen = document.getElementById('iphone-screen');
+        const btn = document.getElementById('btn-toggle-grid');
+        if (showGrid) {
+          screen.classList.add('wireframe-line-grid');
+          btn.className = 'px-2.5 py-1.5 border-2 border-black bg-black text-white text-xs font-mono font-medium flex items-center gap-1.5 transition-all shadow-[2px_2px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none';
+        } else {
+          screen.classList.remove('wireframe-line-grid');
+          btn.className = 'px-2.5 py-1.5 border-2 border-black bg-white text-black hover:bg-neutral-100 text-xs font-mono font-medium flex items-center gap-1.5 transition-all shadow-[2px_2px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none';
+        }
+      }
+
+      // Toggle Placement (Center vs Bottom)
+      function togglePlacement() {
+        buttonPlacement = buttonPlacement === 'center' ? 'bottom' : 'center';
+        document.getElementById('label-pos').textContent = buttonPlacement === 'center' ? 'Al Centro' : 'In Basso';
+        
+        const p1 = document.getElementById('page-1');
+        const p2 = document.getElementById('page-2');
+
+        const alignmentClasses = buttonPlacement === 'center' 
+          ? 'items-center justify-center' 
+          : 'items-center justify-end pb-12';
+
+        p1.className = `screen-page ${currentPage === 1 ? 'page-active' : 'page-left'} absolute inset-0 p-8 flex flex-col ${alignmentClasses} bg-red-600`;
+        p2.className = `screen-page ${currentPage === 2 ? 'page-active' : 'page-right'} absolute inset-0 p-8 flex flex-col ${alignmentClasses} bg-white`;
+      }
+
+      // Set Zoom Scale
+      function setScale(val) {
+        const wrapper = document.getElementById('device-wrapper');
+        wrapper.style.transform = `scale(${val})`;
+        
+        document.querySelectorAll('.zoom-btn').forEach(btn => {
+          if (parseFloat(btn.getAttribute('data-scale')) === val) {
+            btn.className = 'zoom-btn px-2 py-1 font-bold bg-black text-white';
+          } else {
+            btn.className = 'zoom-btn px-2 py-1 font-bold hover:bg-neutral-100';
+          }
+        });
+
+        const metaScale = document.getElementById('meta-scale');
+        if (metaScale) metaScale.textContent = `SCALA: ${Math.round(val * 100)}% · FORMATO NATIVO`;
+      }
+
+      // Toggle Device Mockup vs Full Mobile Direct
+      function toggleDeviceMode() {
+        isFullMobile = !isFullMobile;
+        const chassis = document.getElementById('chassis-body');
+        const sideBtns = document.querySelectorAll('.chassis-btn');
+        const antennas = document.querySelectorAll('.antenna-band');
+        const screen = document.getElementById('iphone-screen');
+        const label = document.getElementById('label-mode');
+
+        if (isFullMobile) {
+          sideBtns.forEach(b => b.classList.add('hidden'));
+          antennas.forEach(a => a.classList.add('hidden'));
+          chassis.className = 'w-auto h-auto bg-transparent border-0 p-0 shadow-none';
+          screen.className = screen.className.replace('rounded-[46px]', 'rounded-3xl shadow-[8px_8px_0px_0px_#000]');
+          label.textContent = 'Vista Device';
+        } else {
+          sideBtns.forEach(b => b.classList.remove('hidden'));
+          antennas.forEach(a => a.classList.remove('hidden'));
+          chassis.className = 'w-[419px] h-[878px] bg-white border-[4px] border-black rounded-[56px] p-[10px] shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] relative flex flex-col transition-all';
+          screen.className = screen.className.replace('rounded-3xl shadow-[8px_8px_0px_0px_#000]', 'rounded-[46px]');
+          label.textContent = 'Schermo Intero';
+        }
+      }
+    </script>
   </body>
 </html>
-
