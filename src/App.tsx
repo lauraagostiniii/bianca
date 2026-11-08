@@ -102,13 +102,14 @@ export default function App() {
                 setDirection(-1);
                 setCurrentPage(1);
               }}
-              className={`px-3 py-1 font-mono text-xs font-bold transition-all ${
+              className={`px-3 py-1 font-mono text-xs font-bold transition-all flex items-center gap-1.5 ${
                 currentPage === 1
-                  ? 'bg-black text-white'
+                  ? 'bg-red-600 text-white shadow-[1px_1px_0px_0px_#000]'
                   : 'bg-white text-black hover:bg-neutral-200 border border-neutral-300'
               }`}
             >
-              Pagina 1 [avanti]
+              <span className={`w-2 h-2 rounded-full border border-black ${currentPage === 1 ? 'bg-white' : 'bg-red-500'}`} />
+              <span>Pagina 1 [avanti]</span>
             </button>
             <span className="text-neutral-400 font-mono text-xs">→</span>
             <button
@@ -198,7 +199,7 @@ export default function App() {
         {/* View Container */}
         {fullMobileMode ? (
           /* Full Mobile View Mode (direct screen view without chassis) */
-          <div className="w-full max-w-[420px] h-[852px] bg-white border-4 border-black shadow-[8px_8px_0px_0px_#000] flex flex-col overflow-hidden relative">
+          <div className={`w-full max-w-[420px] h-[852px] ${currentPage === 1 ? 'bg-red-600' : 'bg-white'} border-4 border-black shadow-[8px_8px_0px_0px_#000] flex flex-col overflow-hidden relative transition-colors duration-300`}>
             <ScreenContent
               currentPage={currentPage}
               direction={direction}
@@ -238,7 +239,7 @@ export default function App() {
                 <div className="absolute bottom-[80px] -right-[4px] w-[4px] h-[6px] bg-neutral-300" />
 
                 {/* Display Area (393 × 852 pt) */}
-                <div className="w-[393px] h-[852px] bg-white border-2 border-black rounded-[46px] overflow-hidden relative flex flex-col">
+                <div className={`w-[393px] h-[852px] ${currentPage === 1 ? 'bg-red-600' : 'bg-white'} border-2 border-black rounded-[46px] overflow-hidden relative flex flex-col transition-colors duration-300`}>
                   <ScreenContent
                     currentPage={currentPage}
                     direction={direction}
@@ -260,8 +261,8 @@ export default function App() {
               <span>·</span>
               <span>393 × 852 pt</span>
               <span>·</span>
-              <span className="border border-black px-1.5 py-0.5 bg-white text-[10px]">
-                {currentPage === 1 ? 'SCHERMATA 1' : 'SCHERMATA 2'}
+              <span className={`border px-1.5 py-0.5 text-[10px] font-bold ${currentPage === 1 ? 'border-red-600 bg-red-600 text-white' : 'border-black bg-white text-black'}`}>
+                {currentPage === 1 ? 'SCHERMATA 1 (SFONDO ROSSO)' : 'SCHERMATA 2 (SFONDO BIANCO)'}
               </span>
             </div>
           </div>
@@ -271,7 +272,8 @@ export default function App() {
       {/* Footer Navigation flow summary */}
       <footer className="bg-white border-t-2 border-black py-2.5 px-4 text-center font-mono text-xs text-neutral-600">
         <div className="max-w-4xl mx-auto flex items-center justify-center gap-3">
-          <span className={`px-2 py-0.5 border ${currentPage === 1 ? 'border-black font-bold bg-neutral-100 text-black' : 'border-neutral-300 text-neutral-400'}`}>
+          <span className={`px-2 py-0.5 border flex items-center gap-1.5 ${currentPage === 1 ? 'border-red-600 font-bold bg-red-50 text-red-700' : 'border-neutral-300 text-neutral-400'}`}>
+            <span className="w-2 h-2 rounded-full bg-red-600 inline-block" />
             Pagina 1: [avanti]
           </span>
           <span className="text-black font-bold">⇄</span>
@@ -309,12 +311,18 @@ function ScreenContent({
   currentTime,
   isFullMode,
 }: ScreenContentProps) {
+  const isPage1 = currentPage === 1;
+
   return (
-    <div className={`w-full h-full relative flex flex-col bg-white text-black ${showGrid ? 'wireframe-line-grid' : ''}`}>
+    <div 
+      className={`w-full h-full relative flex flex-col transition-colors duration-300 ${
+        isPage1 ? 'bg-red-600 text-white' : 'bg-white text-black'
+      } ${showGrid ? 'wireframe-line-grid' : ''}`}
+    >
       {/* Top Status Bar & Dynamic Island */}
       <div className="w-full pt-3 px-6 flex items-center justify-between z-30 shrink-0">
         {/* Left: Clock */}
-        <div className="w-14 font-mono font-bold text-xs tracking-tight">
+        <div className={`w-14 font-mono font-bold text-xs tracking-tight ${isPage1 ? 'text-white' : 'text-black'}`}>
           {currentTime}
         </div>
 
@@ -332,14 +340,14 @@ function ScreenContent({
         <div className="w-14 flex items-center justify-end gap-1.5">
           {/* 4-bar cellular icon wireframe */}
           <div className="flex items-end gap-[1.5px] h-3">
-            <div className="w-[2px] h-[3px] bg-black" />
-            <div className="w-[2px] h-[5px] bg-black" />
-            <div className="w-[2px] h-[8px] bg-black" />
-            <div className="w-[2px] h-[11px] bg-black" />
+            <div className={`w-[2px] h-[3px] ${isPage1 ? 'bg-white' : 'bg-black'}`} />
+            <div className={`w-[2px] h-[5px] ${isPage1 ? 'bg-white' : 'bg-black'}`} />
+            <div className={`w-[2px] h-[8px] ${isPage1 ? 'bg-white' : 'bg-black'}`} />
+            <div className={`w-[2px] h-[11px] ${isPage1 ? 'bg-white' : 'bg-black'}`} />
           </div>
 
           {/* Wi-Fi wireframe icon */}
-          <svg className="w-3.5 h-3.5 stroke-black fill-none stroke-[1.8]" viewBox="0 0 24 24">
+          <svg className={`w-3.5 h-3.5 fill-none stroke-[1.8] ${isPage1 ? 'stroke-white' : 'stroke-black'}`} viewBox="0 0 24 24">
             <path d="M5 12.55a11 11 0 0 1 14.08 0" strokeLinecap="round" />
             <path d="M8.5 16.05a6 6 0 0 1 7 0" strokeLinecap="round" />
             <line x1="12" y1="20" x2="12.01" y2="20" strokeLinecap="round" strokeWidth="2.5" />
@@ -347,10 +355,10 @@ function ScreenContent({
 
           {/* Battery wireframe outline */}
           <div className="flex items-center">
-            <div className="w-[19px] h-[10px] border-[1.5px] border-black rounded-[2.5px] p-[1px] flex items-center">
-              <div className="w-[11px] h-full bg-black rounded-[1px]" />
+            <div className={`w-[19px] h-[10px] border-[1.5px] rounded-[2.5px] p-[1px] flex items-center ${isPage1 ? 'border-white' : 'border-black'}`}>
+              <div className={`w-[11px] h-full rounded-[1px] ${isPage1 ? 'bg-white' : 'bg-black'}`} />
             </div>
-            <div className="w-[1.5px] h-[4px] bg-black rounded-r-[1px]" />
+            <div className={`w-[1.5px] h-[4px] rounded-r-[1px] ${isPage1 ? 'bg-white' : 'bg-black'}`} />
           </div>
         </div>
       </div>
@@ -360,7 +368,8 @@ function ScreenContent({
         <AnimatePresence initial={false} custom={direction} mode="wait">
           {currentPage === 1 ? (
             /* ============================================================ */
-            /* PAGINA 1: Con dentro SOLO un bottone con scritto “avanti”     */
+            /* PAGINA 1: Background rosso con dentro SOLO un bottone        */
+            /* con scritto “avanti”                                        */
             /* ============================================================ */
             <motion.div
               key="pagina-1"
@@ -369,7 +378,7 @@ function ScreenContent({
               initial="initial"
               animate="animate"
               exit="exit"
-              className={`absolute inset-0 p-8 flex flex-col ${
+              className={`absolute inset-0 p-8 flex flex-col bg-red-600 ${
                 buttonPlacement === 'center'
                   ? 'items-center justify-center'
                   : 'items-center justify-end pb-12'
@@ -379,7 +388,7 @@ function ScreenContent({
               <button
                 id="btn-avanti"
                 onClick={handleAvanti}
-                className="w-full max-w-[260px] py-4 px-6 bg-white text-black border-2 border-black font-mono font-bold text-base tracking-wider uppercase rounded-lg shadow-[4px_4px_0px_0px_#000000] hover:bg-neutral-50 active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-3 cursor-pointer group"
+                className="w-full max-w-[260px] py-4 px-6 bg-white text-black border-2 border-black font-mono font-bold text-base tracking-wider uppercase rounded-lg shadow-[4px_4px_0px_0px_#000000] hover:bg-neutral-100 active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-3 cursor-pointer group"
                 aria-label="Avanti alla pagina 2"
               >
                 <span>avanti</span>
@@ -397,7 +406,7 @@ function ScreenContent({
               initial="initial"
               animate="animate"
               exit="exit"
-              className={`absolute inset-0 p-8 flex flex-col ${
+              className={`absolute inset-0 p-8 flex flex-col bg-white ${
                 buttonPlacement === 'center'
                   ? 'items-center justify-center'
                   : 'items-center justify-end pb-12'
@@ -420,7 +429,7 @@ function ScreenContent({
 
       {/* Bottom Home Indicator Bar (iPhone 15) */}
       <div className="w-full py-2 flex justify-center items-center z-30 shrink-0">
-        <div className="w-[134px] h-[4.5px] bg-black rounded-full" />
+        <div className={`w-[134px] h-[4.5px] rounded-full ${isPage1 ? 'bg-black/90' : 'bg-black'}`} />
       </div>
     </div>
   );
